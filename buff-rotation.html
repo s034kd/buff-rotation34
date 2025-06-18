@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buff Rotation Sign-Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    table, form {
+      margin: 0 auto;
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 700px;
+    }
+    th, td, input, select {
+      border: 1px solid #555;
+      padding: 10px;
+    }
+    th {
+      background-color: #333;
+    }
+    tr:nth-child(even) {
+      background-color: #1f1f1f;
+    }
+    .countdown {
+      font-size: 1.2em;
+      margin: 20px 0;
+      color: #00ffcc;
+    }
+    input, select {
+      width: 100%;
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #00cc88;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00aa77;
+    }
+  </style>
+</head>
+<body>
+  <h1>Buff Rotation Sign-Up</h1>
+  <div class="countdown" id="countdown"></div>
+
+  <form id="buff-form">
+    <h2>Sign Up for a Buff Slot</h2>
+    <label for="player">Player Name:</label>
+    <input type="text" id="player" name="player" required />
+
+    <label for="buff">Buff Type:</label>
+    <select id="buff" name="buff">
+      <option value="Research">Research</option>
+      <option value="Building">Building</option>
+      <option value="Training">Training</option>
+      <option value="Gathering">Gathering</option>
+    </select>
+
+    <label for="day">Day:</label>
+    <input type="date" id="day" name="day" required />
+
+    <label for="time">Time (HH:MM):</label>
+    <input type="time" id="time" name="time" required />
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Time</th>
+        <th>Buff</th>
+        <th>Player</th>
+      </tr>
+    </thead>
+    <tbody id="rotation-table"></tbody>
+  </table>
+
+  <script>
+    const table = document.getElementById("rotation-table");
+    const form = document.getElementById("buff-form");
+
+    // Load entries from localStorage if available
+    let entries = JSON.parse(localStorage.getItem("buffEntries")) || [];
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      const player = document.getElementById("player").value;
+      const buff = document.getElementById("buff").value;
+      const day = document.getElementById("day").value;
+      const time = document.getElementById("time").value;
+
+      entries.push({ day, time, buff, player });
+      localStorage.setItem("buffEntries", JSON.stringify(entries));
+      updateTable();
+      form.reset();
+    });
+
+    function updateTable() {
+      table.innerHTML = "";
+      entries.sort((a, b) => (a.day + a.time).localeCompare(b.day + b.time));
+      entries.forEach(r => {
+        let row = `<tr><td>${r.day}</td><td>${r.time}</td><td>${r.buff}</td><td>${r.player}</td></tr>`;
+        table.innerHTML += row;
+      });
+    }
+
+    // Countdown placeholder (not linked to form data yet)
+    function updateCountdown() {
+      document.getElementById("countdown").innerText =
+        `Use the form below to sign up for a buff rotation.`;
+    }
+
+    updateCountdown();
+    updateTable();
+  </script>
+</body>
+</html>
